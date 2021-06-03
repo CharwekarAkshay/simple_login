@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_login/components/custom_text_form_field.dart';
 import 'package:simple_login/constants.dart';
 import 'package:simple_login/helper/validators.dart';
+import 'package:simple_login/notifiers/authentication_notifier.dart';
 import 'package:simple_login/screens/home/home_screen.dart';
 import 'package:simple_login/screens/signup/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = "/login";
-  const LoginScreen({ Key? key }) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _formKey = GlobalKey<FormState>();
 
   // * Text Field Controller
@@ -23,13 +24,32 @@ class _LoginScreenState extends State<LoginScreen> {
   // * TextField FocusNode
   final usnernameFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
-  
+
   @override
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
 
     super.dispose();
+  }
+
+  loginUser(BuildContext context) {
+    if (_formKey.currentState?.validate() ?? false) {
+      String username = usernameController.text;
+      String password = passwordController.text;
+      if (username != "" &&
+          password != "" &&
+          username == "AkshayCharwekar" &&
+          password == "password") {
+        Provider.of<AuthenticationNotifier>(context, listen: false).userLogin();
+        Navigator.pushNamed(context, HomeScreen.routeName);
+      } else {
+        final snackBar = SnackBar(
+            content: Text("Please check your creds!!"),
+            backgroundColor: Colors.redAccent);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
   }
 
   @override
@@ -50,11 +70,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                        flex: 1,
-                        child: Text(
-                          "Login Form",
-                          style: Theme.of(context).textTheme.headline1,
-                        )),
+                      flex: 1,
+                      child: Text(
+                        "Login Form",
+                        style: Theme.of(context).textTheme.headline1?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -75,7 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             validator: passwordValidator,
                           ),
                           SizedBox(height: kDefaultPadding),
-                          TextButton(onPressed: () {}, child: Text("Login")),
+                          TextButton(
+                              onPressed: () {
+                                loginUser(context);
+                              },
+                              child: Text("Login")),
                           SizedBox(height: kDefaultPadding),
                           Container(
                             width: double.infinity,

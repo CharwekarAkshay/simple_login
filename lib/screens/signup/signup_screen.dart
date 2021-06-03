@@ -58,9 +58,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           flex: 1,
                           child: Text(
                             "Signup Form",
-                            style: Theme.of(context).textTheme.headline1.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.headline1?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                         ),
                         Expanded(
